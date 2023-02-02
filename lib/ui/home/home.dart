@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -41,10 +43,7 @@ class _HomeState extends State<Home> {
         onHover: _onHover,
         child: Stack(
           children: [
-            AnimatedPositioned(
-              duration: const Duration(
-                milliseconds: 400,
-              ),
+            Positioned(
               left: buttonPosition?.dx,
               top: buttonPosition?.dy,
               child: ElevatedButton(
@@ -61,22 +60,19 @@ class _HomeState extends State<Home> {
   }
 
   void _onHover(PointerEvent event) {
-    final offset = event.position;
-
-    final direction = _getDirection();
-    buttonPosition = Offset(
-      offset.dx + 20,
-      offset.dy + 20,
-    );
-    _moveButton(direction);
-    // buttonPosition = position.;
-    lastPosition = buttonPosition;
-    setState(() {});
+    if (buttonPosition != null && lastPosition != null) {
+      final direction = _getDirection(event.position);
+      lastPosition = buttonPosition;
+      _moveButton(direction, buttonPosition!.dx, buttonPosition!.dy);
+      setState(() {});
+    } else {
+      log('Null');
+    }
   }
 
-  Direction _getDirection() {
-    final mouseDx = buttonPosition!.dx;
-    final mouseDy = buttonPosition!.dy;
+  Direction _getDirection(Offset mouse) {
+    final mouseDx = mouse.dx;
+    final mouseDy = mouse.dy;
     final lastDx = lastPosition!.dx;
     final lastDy = lastPosition!.dy;
     if (mouseDx == lastDx && mouseDy == lastDy) {
@@ -102,33 +98,58 @@ class _HomeState extends State<Home> {
     }
   }
 
-  void _moveButton(Direction direction) {
+  void _moveButton(Direction direction, double dx, double dy) {
     switch (direction) {
       case Direction.none:
         // Do nothing
         break;
       case Direction.up:
+        buttonPosition = Offset(
+          dx,
+          dy + 20,
+        );
         break;
       case Direction.down:
-        // TODO: Handle this case.
+        buttonPosition = Offset(
+          dx,
+          dy - 20,
+        );
         break;
       case Direction.left:
-        // TODO: Handle this case.
+        buttonPosition = Offset(
+          dx - 20,
+          dy,
+        );
         break;
       case Direction.right:
-        // TODO: Handle this case.
+        buttonPosition = Offset(
+          dx + 20,
+          dy,
+        );
         break;
       case Direction.topLeft:
-        // TODO: Handle this case.
+        buttonPosition = Offset(
+          dx - 20,
+          dy - 20,
+        );
         break;
       case Direction.topRight:
-        // TODO: Handle this case.
+        buttonPosition = Offset(
+          dx + 20,
+          dy - 20,
+        );
         break;
       case Direction.bottomLeft:
-        // TODO: Handle this case.
+        buttonPosition = Offset(
+          dx - 20,
+          dy + 20,
+        );
         break;
       case Direction.bottomRight:
-        // TODO: Handle this case.
+        buttonPosition = Offset(
+          dx + 20,
+          dy + 20,
+        );
         break;
     }
   }
